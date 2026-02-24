@@ -451,8 +451,8 @@
       <div id="summary-items"></div>
       <div class="divider"></div>
       <div class="alert">
-        Ce bilan vous est également envoyé par email à <strong id="summary-email-display"></strong>.<br>
-        Sur simple demande, toutes vos données peuvent être détruites : contactez <a href="mailto:davidcapes@novium.ovh">davidcapes@novium.ovh</a>
+        Ce bilan vous est également envoyé par email à <strong>davidcapes@novium.ovh</strong>.<br>
+        Sur simple demande adressée à cette adresse, toutes vos données seront détruites.
       </div>
       <div id="send-status" style="display:none;"></div>
       <div class="btn-group">
@@ -774,7 +774,7 @@ function continueAfterCheckpoint() {
 function closureScreen() {
   document.getElementById('summary-greeting').textContent =
     'Bonjour ' + state.userName + ', voici le récapitulatif de vos réponses au questionnaire NOViUM.';
-  document.getElementById('summary-email-display').textContent = state.userEmail;
+  // Email affiché dans le récapitulatif
   const container = document.getElementById('summary-items');
   container.innerHTML = '';
   state.visitedOrder.forEach((entry, i) => {
@@ -854,7 +854,6 @@ async function sendEmail() {
     const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw0IESWjitbv8Z1wyK08j-Kb6MyqUIlINHhlc-bYs7KW1DkK1L9wmgaSoYTlejd6-lfUg/exec';
     const response = await fetch(APPS_SCRIPT_URL, {
       method:  'POST',
-      headers: { 'Content-Type': 'application/json' },
       body:    JSON.stringify(payload)
     });
 
