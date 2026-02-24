@@ -451,8 +451,7 @@
       <div id="summary-items"></div>
       <div class="divider"></div>
       <div class="alert">
-        Ce bilan vous est également envoyé par email à <strong>davidcapes@novium.ovh</strong>.<br>
-        Sur simple demande adressée à cette adresse, toutes vos données seront détruites.
+        Ce bilan a été automatiquement envoyé par email à <strong>davidcapes@novium.ovh</strong>. Sur simple demande adressée à cette adresse, toutes vos données seront détruites.
       </div>
       <div id="send-status" style="display:none;"></div>
       <div class="btn-group">
@@ -833,12 +832,13 @@ async function sendEmail() {
   const btn = document.querySelector('#screen-summary .btn-primary');
   const statusEl = document.getElementById('send-status');
 
-  // Désactiver le bouton pendant l'envoi
   btn.disabled = true;
   btn.textContent = '⏳ Envoi en cours…';
   statusEl.style.display = 'block';
   statusEl.className = 'alert';
-  statusEl.innerHTML = 'Enregistrement de vos réponses…';
+  statusEl.innerHTML = 'Envoi de vos réponses en cours…';
+
+  const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw0IESWjitbv8Z1wyK08j-Kb6MyqUIlINHhlc-bYs7KW1DkK1L9wmgaSoYTlejd6-lfUg/exec';
 
   const payload = {
     nom:            state.userName,
@@ -851,33 +851,26 @@ async function sendEmail() {
   };
 
   try {
-    const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw0IESWjitbv8Z1wyK08j-Kb6MyqUIlINHhlc-bYs7KW1DkK1L9wmgaSoYTlejd6-lfUg/exec';
-    const response = await fetch(APPS_SCRIPT_URL, {
-      method:  'POST',
-      body:    JSON.stringify(payload)
+    await fetch(APPS_SCRIPT_URL, {
+      method: 'POST',
+      mode:   'no-cors',
+      body:   JSON.stringify(payload)
     });
 
-    const result = await response.json();
-
-    if (result.success) {
-      statusEl.className = 'alert alert-success';
-      statusEl.innerHTML = `✅ <strong>Réponses enregistrées !</strong> Un email récapitulatif vous a été envoyé à <strong>${state.userEmail}</strong>.`;
-      setTimeout(() => goTo('screen-done'), 2200);
-    } else {
-      throw new Error(result.error || 'Erreur inconnue');
-    }
+    statusEl.className = 'alert alert-success';
+    statusEl.innerHTML = `✅ <strong>Vos réponses ont été envoyées.</strong> Un email récapitulatif va arriver à <strong>${state.userEmail}</strong> dans quelques instants.`;
+    setTimeout(() => goTo('screen-done'), 2500);
 
   } catch (err) {
-    // Fallback mailto si le PHP échoue
-    console.warn('PHP indisponible, fallback mailto :', err);
-    const mailBody = encodeURIComponent(buildEmailBody());
-    const mailName = encodeURIComponent(state.userName);
+    console.warn('Erreur envoi :', err);
     statusEl.className = 'alert';
-    statusEl.innerHTML = `⚠️ Envoi automatique indisponible. <a href="mailto:davidcapes@novium.ovh?subject=Bilan%20NOViUM%20—%20${mailName}&body=${mailBody}" style="color:var(--primary)">Cliquez ici pour envoyer manuellement votre bilan par email.</a>`;
+    statusEl.innerHTML = '⚠️ Une erreur réseau s\'est produite. Vérifiez votre connexion et réessayez.';
     btn.disabled = false;
-    btn.textContent = '📧 Recevoir mon bilan par email';
+    btn.textContent = '📧 Envoyer mon bilan';
   }
 }
+
+
 </script>
 </body>
 </html>
