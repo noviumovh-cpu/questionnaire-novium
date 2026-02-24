@@ -851,10 +851,13 @@ async function sendEmail() {
   };
 
   try {
+    const formData = new URLSearchParams();
+    formData.append('payload', JSON.stringify(payload));
+
     await fetch(APPS_SCRIPT_URL, {
       method: 'POST',
       mode:   'no-cors',
-      body:   JSON.stringify(payload)
+      body:   formData
     });
 
     statusEl.className = 'alert alert-success';
